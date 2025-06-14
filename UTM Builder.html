@@ -1,0 +1,131 @@
+<div>
+    <!-- Website URL -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Website URL</label>
+      <input type="url" id="baseUrl" placeholder="https://yourdomain.com/page" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <!-- Campaign Source -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Campaign Source (utm_source)</label>
+      <input type="url" id="source" placeholder="e.g. google, newsletter" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <!-- Campaign Medium -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Campaign Medium (utm_medium)</label>
+      <input type="text" id="medium" placeholder="e.g. cpc, email" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <!-- Campaign Name -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Campaign Name (utm_campaign)</label>
+      <input type="text" id="campaign" placeholder="e.g. summer_sale" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <!-- Campaign Term -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Campaign Term (utm_term)</label>
+      <input type="text" id="term" placeholder="Optional keyword" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <!-- Campaign Content -->
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-bottom: 28px;">
+      <label class="elementor-field-label" style="padding-bottom: 12px; display: block;">Campaign Content (utm_content)</label>
+      <input type="text" id="utmContent" placeholder="Optional ad identifier" class="elementor-field elementor-size-sm elementor-field-textual" />
+    </div>
+
+    <button id="generateBtn" type="button" class="elementor-button elementor-size-sm">Generate UTM Link</button>
+
+    <div id="outputWrapper" class="elementor-field-type-text elementor-field-group elementor-column elementor-col-100" style="margin-top:56px; display:none;">
+      <label class="elementor-field-label" style="display:block; padding-bottom:12px;">Generated UTM Link</label>
+      <textarea id="output" readonly class="elementor-field elementor-size-sm elementor-field-textual" style="width:100%; min-height:80px;"></textarea>
+    </div>
+
+    <button id="copyBtn" type="button" class="elementor-button elementor-size-sm" style="display:none; margin-top:24px;">Copy Link</button>
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    'use strict';
+
+    const $ = id => document.getElementById(id);
+    const getVal = el => (el && typeof el.value === 'string') ? el.value.trim() : '';
+
+    const baseInput = $('baseUrl');
+    const sourceInput = $('source');
+    const mediumInput = $('medium');
+    const campaignInput = $('campaign');
+    const termInput = $('term');
+    const contentInput = $('utmContent');
+    const generateBtn = $('generateBtn');
+    const copyBtn = $('copyBtn');
+    const outputWrapper = $('outputWrapper');
+    const outputArea = $('output');
+
+    const isValidUrl = str => {
+      try {
+        const url = new URL(str);
+        return ['http:', 'https:'].includes(url.protocol);
+      } catch { return false; }
+    };
+
+    const clearInputs = () => [baseInput, sourceInput, mediumInput, campaignInput, termInput, contentInput]
+      .forEach(el => { if (el) el.value = ''; });
+
+    const buildUtm = () => {
+      outputArea.value = '';
+      outputWrapper.style.display = 'none';
+      copyBtn.style.display = 'none';
+
+      const baseUrl = getVal(baseInput);
+      const source = getVal(sourceInput);
+      const medium = getVal(mediumInput);
+      const campaign = getVal(campaignInput);
+      const term = getVal(termInput);
+      const content = getVal(contentInput);
+
+      if (!isValidUrl(baseUrl)) {
+        alert('Enter a valid URL starting with http:// or https://');
+        return;
+      }
+      if (!source || !medium || !campaign) {
+        alert('Source, Medium, and Campaign are required.');
+        return;
+      }
+
+      const params = new URLSearchParams({
+        utm_source: source,
+        utm_medium: medium,
+        utm_campaign: campaign
+      });
+      if (term) params.set('utm_term', term);
+      if (content) params.set('utm_content', content);
+
+      const finalUrl = baseUrl + (baseUrl.includes('?') ? '&' : '?') + params.toString();
+      outputArea.value = finalUrl;
+      outputWrapper.style.display = 'block';
+      copyBtn.style.display = 'inline-block';
+      clearInputs();
+    };
+
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(outputArea.value);
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = 'Copied!';
+        copyBtn.disabled = true;
+        setTimeout(() => {
+          copyBtn.textContent = originalText;
+          copyBtn.disabled = false;
+        }, 1500);
+      } catch (e) {
+        console.error(e);
+        alert('Copy failed. Please copy manually.');
+      }
+    };
+
+    generateBtn.addEventListener('click', buildUtm);
+    copyBtn.addEventListener('click', copyToClipboard);
+  });
+</script>
