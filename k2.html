@@ -1,0 +1,264 @@
+<div id="ppc-generated-tool">
+
+  <style>
+    /* CSS Variables & Scoped Styles */
+    #ppc-generated-tool {
+      /* Variables */
+      --ppc-primary: #0164E0;
+      --ppc-primary-hover: #0050b3;
+      --ppc-text: #18181b;
+      --ppc-border: #E4E4E7;
+      --ppc-bg-light: #FAFAFA;
+      --ppc-focus-ring: rgba(1, 100, 224, 0.25);
+      
+      /* Font Logic: Inherit from parent theme, fallback to sans-serif */
+      font-family: sans-serif;
+      color: var(--ppc-text);
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Reset box sizing for this tool */
+    #ppc-generated-tool *, 
+    #ppc-generated-tool *::before, 
+    #ppc-generated-tool *::after {
+      box-sizing: border-box;
+    }
+
+    /* Layout Containers */
+    #ppc-generated-tool .ppc-flex-container {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    #ppc-generated-tool .ppc-col-main {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    #ppc-generated-tool .ppc-col-side {
+      flex: 0 0 280px;
+      width: 280px;
+    }
+    
+    /* Responsive adjustment for sidebar */
+    @media (max-width: 768px) {
+      #ppc-generated-tool .ppc-col-side {
+        flex: 1;
+        width: 100%;
+      }
+    }
+
+    /* Form Elements */
+    #ppc-generated-tool .ppc-label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 0.95em;
+    }
+
+    #ppc-generated-tool .ppc-input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--ppc-border);
+      border-radius: 6px;
+      background: #fff;
+      font-size: 1em;
+      line-height: 1.5;
+      resize: vertical;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      
+      /* CRITICAL: Force inputs to inherit font family */
+      font-family: Sans-Serif; 
+    }
+
+    #ppc-generated-tool .ppc-input:focus {
+      outline: none;
+      border-color: var(--ppc-primary);
+      box-shadow: 0 0 0 3px var(--ppc-focus-ring);
+    }
+
+    #ppc-generated-tool .ppc-input[readonly] {
+      background-color: var(--ppc-bg-light);
+      color: #4b5563;
+    }
+
+    /* Buttons */
+    #ppc-generated-tool .ppc-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      font-size: 1em;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: Sans-Serif; /* Force button to inherit font */
+      border: 1px solid transparent;
+    }
+
+    #ppc-generated-tool .ppc-btn-primary {
+      background-color: var(--ppc-primary);
+      color: #ffffff;
+    }
+
+    #ppc-generated-tool .ppc-btn-primary:hover {
+      background-color: var(--ppc-primary-hover);
+    }
+
+    #ppc-generated-tool .ppc-btn-outline {
+      background-color: #fff;
+      color: var(--ppc-primary);
+      border-color: var(--ppc-primary);
+      margin-top: 12px;
+      font-size: 0.9em;
+    }
+
+    #ppc-generated-tool .ppc-btn-outline:hover {
+      background-color: var(--ppc-bg-light);
+    }
+
+    /* Options Box */
+    #ppc-generated-tool .ppc-options-card {
+      background: var(--ppc-bg-light);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--ppc-border);
+    }
+
+    #ppc-generated-tool .ppc-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #ppc-generated-tool .ppc-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 0.95em;
+    }
+
+    #ppc-generated-tool input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--ppc-primary);
+      cursor: pointer;
+    }
+
+    /* Output Grid */
+    #ppc-generated-tool .ppc-output-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+      width: 100%;
+    }
+  </style>
+
+  <div class="ppc-flex-container">
+    
+    <div class="ppc-col-main">
+      <div style="margin-bottom: 20px;">
+        <label class="ppc-label">Enter Keywords (one per line)</label>
+        <textarea id="keywordsInput" class="ppc-input" style="height:200px;" placeholder="e.g. buy shoes&#10;sneakers for men"></textarea>
+      </div>
+      <button id="generateBtn" type="button" class="ppc-btn ppc-btn-primary">Generate Match Types</button>
+    </div>
+
+    <div class="ppc-col-side">
+      <div class="ppc-options-card">
+        <label class="ppc-label">Select Match Types</label>
+        <div class="ppc-checkbox-group">
+          <label class="ppc-checkbox-item"><input type="checkbox" id="broad" checked> Broad</label>
+          <label class="ppc-checkbox-item"><input type="checkbox" id="phrase" checked> Phrase</label>
+          <label class="ppc-checkbox-item"><input type="checkbox" id="exact" checked> Exact</label>
+          <div style="height: 1px; background: var(--ppc-border); margin: 5px 0;"></div>
+          <label class="ppc-checkbox-item"><input type="checkbox" id="lowercase" checked> Change to Lowercase</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ppc-output-grid">
+    <div id="outputBroad" style="display:none;">
+      <label class="ppc-label">Broad Match</label>
+      <textarea readonly class="ppc-input" style="height:200px;"></textarea>
+      <button class="copyBtn ppc-btn ppc-btn-outline">Copy Broad</button>
+    </div>
+    
+    <div id="outputPhrase" style="display:none;">
+      <label class="ppc-label">Phrase Match</label>
+      <textarea readonly class="ppc-input" style="height:200px;"></textarea>
+      <button class="copyBtn ppc-btn ppc-btn-outline">Copy Phrase</button>
+    </div>
+    
+    <div id="outputExact" style="display:none;">
+      <label class="ppc-label">Exact Match</label>
+      <textarea readonly class="ppc-input" style="height:200px;"></textarea>
+      <button class="copyBtn ppc-btn ppc-btn-outline">Copy Exact</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(()=>{
+  'use strict';
+  const $=q=>document.querySelector(q);
+  const keywordsInput=$('#keywordsInput');
+  const broadBox=$('#outputBroad');
+  const phraseBox=$('#outputPhrase');
+  const exactBox=$('#outputExact');
+  const generateBtn=$('#generateBtn');
+  const copyBtns=document.querySelectorAll('.copyBtn');
+
+  function generateMatchTypes(){
+    let lines=keywordsInput.value.split('\n').map(l=>l.trim()).filter(l=>l);
+
+    // Clean phrase and exact match syntax from input
+    lines = lines.map(l => l.replace(/^\[|\]$/g, '').replace(/^"|"$/g, '').trim());
+
+    const doBroad=$('#broad').checked;
+    const doPhrase=$('#phrase').checked;
+    const doExact=$('#exact').checked;
+    const toLower=$('#lowercase').checked;
+    if(!lines.length){alert('Please enter at least one keyword.');return;}
+    if(toLower)lines=lines.map(l=>l.toLowerCase());
+
+    if(doBroad){
+      broadBox.style.display='block';
+      broadBox.querySelector('textarea').value=lines.join('\n');
+    } else { broadBox.style.display='none'; }
+
+    if(doPhrase){
+      phraseBox.style.display='block';
+      phraseBox.querySelector('textarea').value=lines.map(l=>`"${l}"`).join('\n');
+    } else { phraseBox.style.display='none'; }
+
+    if(doExact){
+      exactBox.style.display='block';
+      exactBox.querySelector('textarea').value=lines.map(l=>`[${l}]`).join('\n');
+    } else { exactBox.style.display='none'; }
+
+    keywordsInput.value='';
+  }
+
+  function handleCopyClick(e){
+    const btn=e.target;
+    const text=btn.previousElementSibling.value;
+    navigator.clipboard.writeText(text).then(()=>{
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = originalText, 1500);
+    }).catch(()=>console.error('Failed to copy'));
+  }
+
+  generateBtn.addEventListener('click',generateMatchTypes);
+  copyBtns.forEach(btn=>btn.addEventListener('click',handleCopyClick));
+})();
+</script>
